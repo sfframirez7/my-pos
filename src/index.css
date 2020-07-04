@@ -1,0 +1,19 @@
+body {
+    background-color: #E8EAED;
+    /* background-color: #15202b; */
+  }
+  
+  .my-card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3;
+  }
+  
+  
+  .my-bg {
+    background-color: #E8EAED;
+    /* background-color: #15202b !important; */
+  }
+  
+  .my-color {
+    color: #fd7e14 !important;
+  }
