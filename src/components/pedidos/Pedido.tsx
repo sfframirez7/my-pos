@@ -26,7 +26,7 @@ const Pedido : React.FC<IProps> = (props) => {
                         <p className="mb-1">{props.pedido.Description}</p>
                         <small className="text-muted ">{ Moment(props.pedido.CreatedAt).fromNow()}</small>
                     </div>
-                    <div className="mx-3 align-self-center"> 
+                    <div className="mx-md-3 align-self-center"> 
                         <i className="fas fa-arrow-right fa-2x text-primary "></i>
                     </div>
 

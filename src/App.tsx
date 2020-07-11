@@ -20,7 +20,7 @@ function App() {
       <div>
 
         <Switch>
-          <Route path="/pedido/:uid">
+          <Route path="/pedido/:pedidoUid">
             <SeePedido/>
           </Route>
           <Route path="/">
