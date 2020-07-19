@@ -1,6 +1,7 @@
 
-import { IPedido, IPedidoItem } from "../models/PedidoModel";
+import { IPedido, IPedidoItem, IAbono } from "../models/PedidoModel";
 import { Firebase } from "../config/config";
+import PedidoItem from "../components/pedidos/PedidoItem";
 
 
 export function NewPedidoService(pedido : IPedido)
@@ -44,7 +45,8 @@ export function NewPedidoItemService(pedidoUid: string, pedido : IPedidoItem)
         PriceDetailed   : pedido.PriceDetailed,
         Price           : pedido.Price,
         Abonos          : [],
-        Cost            : pedido.Cost
+        Cost            : pedido.Cost,
+        CreatedAt       : new Date().toISOString()
     })
 }
 
@@ -52,5 +54,28 @@ export function GetPedidoItems(pedidoUid : string)
 {
     const DB = Firebase.firestore()
     
-    return DB.collection("pedidoItems").doc(pedidoUid).collection("items")
+    return DB.collection("pedidoItems").doc(pedidoUid).collection("items").orderBy("CreatedAt", "desc")
+}
+
+export function NewPedidoItemAbono(pedidoUid : string, pedidoItemUid : string, abono : IAbono)
+{
+    const DB = Firebase.firestore()
+    
+    var _abono = {
+        Type : abono.Type,
+        Amount : abono.Amount,
+        CreatedAt : abono.CreateAt
+    }
+
+    var d = + new Date()
+
+    var key = d.toString();
+    var obj : any= {};
+    obj[key] = _abono;
+
+
+    return DB.collection("pedidoItems").doc(pedidoUid).collection("items").doc(pedidoItemUid).set(
+    {   "Abonos" : 
+        obj
+    }, {merge : true})
 }

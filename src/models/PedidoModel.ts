@@ -6,7 +6,7 @@ export interface IPedido {
 }
 
 export interface IPedidoItem {
-        Id?             : string
+        Id              : string
         Client          : string
         Description     : string
         PriceDetailed   : string

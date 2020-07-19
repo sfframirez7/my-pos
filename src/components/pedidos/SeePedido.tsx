@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react' 
 import NewPedidoItem from './NewPedidoItem'
 import { GetPedido, GetPedidoItems } from '../../services/PedidoService'
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { IPedido, IPedidoItem } from '../../models/PedidoModel';
 import PedidoItem from './PedidoItem';
 import Loading from '../common/Loading';
+import { IAbono } from '../../models/PedidoModel';
 
 const SeePedido : React.FC<{}> = () => { 
 
-    const [pedido, setPedido]           = useState<IPedido>()
-    const [pedidoItems, setPedidoItem]  = useState<IPedidoItem[]>([])
-    const [loading, setLoading]         = useState(false)
+    const [pedido, setPedido]                = useState<IPedido>()
+    const [pedidoItems, setPedidoItem]       = useState<IPedidoItem[]>([])
+    const [loading, setLoading]              = useState(false)
+    const [loadingItems, setLoadingItems]    = useState(false)
 
     let { pedidoUid } = useParams();
 
@@ -26,7 +28,7 @@ const SeePedido : React.FC<{}> = () => {
         GetPedido(pedidoUid).onSnapshot((snap)=> {
             
             if(snap.exists)
-            {
+            {   
                 const data = snap.data()
                 
                 var _pedido : IPedido = {
@@ -44,14 +46,28 @@ const SeePedido : React.FC<{}> = () => {
 
     function LoadPedidoItems()
     {
-        setLoading(true)
+        setLoadingItems(true)
         GetPedidoItems(pedidoUid).onSnapshot((snap)=> {
             var _pedidoItems : IPedidoItem[] = []
             snap.forEach((doc)=> {
                 const data = doc.data()
+                var _abonos : IAbono[]= []
+                
+                if(data.Abonos)
+                {
+                    Object.keys(data.Abonos)
+                    .map(function(key) {
+                        var _abono : IAbono = {
+                             Type   : data.Abonos[key].Type, 
+                             Amount : data.Abonos[key].Amount , 
+                             CreateAt: data.Abonos[key].CreatedAt
+                        }
+                       return _abonos.push(_abono)
+                        });
+                }
 
                 var _pedido : IPedidoItem = {
-                    Abonos          : data?.Abonos,
+                    Abonos          : _abonos,
                     Client          : data?.Client,
                     Cost            : data?.Cost,
                     Description     : data?.Description,
@@ -64,7 +80,7 @@ const SeePedido : React.FC<{}> = () => {
             })
 
             setPedidoItem(_pedidoItems)
-            setLoading(false)
+            setLoadingItems(false)
         })
     }
 
@@ -77,9 +93,11 @@ const SeePedido : React.FC<{}> = () => {
 
                         <div className="row">
                             <div className="col">
-                                <button className="btn mr-4" onClick={()=>window.history.back()}>
-                                    <i className="fas fa-arrow-left fa-2x"></i>
-                                </button>
+                                <Link to="/">
+                                    <button className="btn mr-4" onClick={()=>window.history.back()}>
+                                        <i className="fas fa-arrow-left fa-2x"></i>
+                                    </button>
+                                </Link>
                             </div>
                         </div>
 
@@ -120,9 +138,14 @@ const SeePedido : React.FC<{}> = () => {
                         <div className="row">
                             <div className="col-12 col-md-10 offset-md-1 ">
                                 <h4 className="mx-2">Items:</h4>
+
+                                <div className=" text-center">
+                                    <Loading loading={loadingItems}/>
+                                </div>
+
                                 {pedidoItems.map((item, index)=> {
                                     return (
-                                        <div key={index}>
+                                        <div className="p-2" key={index}>
                                             <PedidoItem item={item}/>
                                         </div>
                                     )

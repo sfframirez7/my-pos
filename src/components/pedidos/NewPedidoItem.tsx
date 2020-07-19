@@ -25,6 +25,7 @@ const NewPedidoItem : React.FC<{}> = () => {
 
         setLoading(true)
         var model : IPedidoItem = {
+            Id: "",
             Client,
             Cost,
             Abonos : [],
