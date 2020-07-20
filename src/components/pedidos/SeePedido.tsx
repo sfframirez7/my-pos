@@ -9,10 +9,11 @@ import { IAbono } from '../../models/PedidoModel';
 
 const SeePedido : React.FC<{}> = () => { 
 
-    const [pedido, setPedido]                = useState<IPedido>()
-    const [pedidoItems, setPedidoItem]       = useState<IPedidoItem[]>([])
-    const [loading, setLoading]              = useState(false)
-    const [loadingItems, setLoadingItems]    = useState(false)
+    const [pedido, setPedido]                       = useState<IPedido>()
+    const [pedidoItems, setPedidoItems]             = useState<IPedidoItem[]>([])
+    const [pedidoItemsLoaded, setPedidoItemLoaded]  = useState<IPedidoItem[]>([])
+    const [loading, setLoading]                     = useState(false)
+    const [loadingItems, setLoadingItems]           = useState(false)
 
     let { pedidoUid } = useParams();
 
@@ -79,9 +80,31 @@ const SeePedido : React.FC<{}> = () => {
                 
             })
 
-            setPedidoItem(_pedidoItems)
+            setPedidoItems(_pedidoItems)
+            setPedidoItemLoaded(_pedidoItems)
             setLoadingItems(false)
         })
+    }
+
+    function FilterPedidoItems(e : any)
+    {
+        var txtSearch : string = e.target.value || ""
+
+        if(!txtSearch)
+        {
+            setPedidoItems(pedidoItemsLoaded)
+            return
+        }
+
+
+        var pedidoItemsFound = pedidoItemsLoaded.filter((item)=> {
+            return (
+                item.Client.toLowerCase().indexOf(txtSearch.toLowerCase().trim()) > -1 ||
+                item.Description.toLowerCase().indexOf(txtSearch.toLowerCase().trim()) > -1
+            )
+        })
+
+        setPedidoItems(pedidoItemsFound)
     }
 
      return (
@@ -94,7 +117,7 @@ const SeePedido : React.FC<{}> = () => {
                         <div className="row">
                             <div className="col">
                                 <Link to="/">
-                                    <button className="btn mr-4" onClick={()=>window.history.back()}>
+                                    <button className="btn mr-4" >
                                         <i className="fas fa-arrow-left fa-2x"></i>
                                     </button>
                                 </Link>
@@ -136,12 +159,30 @@ const SeePedido : React.FC<{}> = () => {
                         </div>
 
                         <div className="row">
-                            <div className="col-12 col-md-10 offset-md-1 ">
-                                <h4 className="mx-2">Items:</h4>
+                            <div className="col-12 col-md-10 offset-md-1">
+                               <h4 className="mx-2">Items:</h4>
+
+                               <div className={"col-12 col-md-6 offset-md-3 "}>
+                                   <input type="text" className={"form-control p-3 " + (pedidoItemsLoaded.length > 0 ? "": "d-none") }  
+                                    placeholder="Buscar..." onChange={(e)=> FilterPedidoItems(e)}/>
+                               </div>
+
+                               <div className={"text-center " +(pedidoItems.length === 0 && !loadingItems ? "" : "d-none")} >
+                                   <p className="text-muted">
+                                       No data found
+                                   </p>
+                               </div>
+
 
                                 <div className=" text-center">
                                     <Loading loading={loadingItems}/>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-12 col-md-10 offset-md-1 ">
+                                
 
                                 {pedidoItems.map((item, index)=> {
                                     return (

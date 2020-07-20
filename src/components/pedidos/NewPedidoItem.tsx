@@ -80,8 +80,9 @@ const NewPedidoItem : React.FC<{}> = () => {
                         </h5>
                     </div>
                     <div className="col-12 col-md-6 text-md-left">
-                        <input type="text" className="form-control" name="txtDescripcion" 
-                            id="txtDescripcion"  placeholder="Descripción" value={PriceDetailed} onChange={(e)=> setPriceDetailed(e.target.value)}/>
+                        <textarea  className="form-control"  rows={2}
+                            placeholder="Descripción" value={PriceDetailed} onChange={(e)=> setPriceDetailed(e.target.value)}>
+                        </textarea>
                     </div>
                 </div>
                 <div className="row p-2">

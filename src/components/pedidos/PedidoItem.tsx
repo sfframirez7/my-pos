@@ -17,11 +17,12 @@ const PedidoItem : React.FC<IProps> = (props) => {
 
     useEffect(()=> {
         var _total = 0
+        setTotal(_total)
         props.item.Abonos.map((abono, index)=> {
                return _total += abono.Amount 
         })
         setTotal(_total)
-    }, [])
+    }, [props])
 
      return (
          <div className="m-1 my-2">
@@ -49,26 +50,57 @@ const PedidoItem : React.FC<IProps> = (props) => {
                     <div className="collapse card p-2 m-2" id={"collapseNewAbono"+ props.item.Id}>
                         <NewAbono PedidoItemId={props.item.Id}/>
                     </div>
-                
-                    <ul className="list-group list-group-flush">
-                        {props.item.Abonos.map((abono, index)=> {
-                            return (
-                                <li className="list-group-item d-flex justify-content-between align-items-center py-0" key={index}>
-                                    <div className="p-0 m-0">
-                                        <p className="p-0 m-0">
-                                            {abono.Type}
-                                        </p>  
-                                        <span className="p-0 m-0 text-muted">{ Moment(abono.CreateAt).format('MMMM Do YYYY, h:mm:ss a') }</span>
-                                    </div>
-                                    <span className="badge badge-primary badge-pill badge-info">{parseFloat( abono.Amount.toString())}</span>
-                                </li>
 
-                            )
-                        })}
+                    <div className="text-center">
+                       <button className="btn btn-link p-0" 
+                                type="button" data-toggle="collapse" 
+                                data-target={"#collapseAbonos"+ props.item.Id} aria-expanded="false" 
+                                aria-controls="collapseExample">
+                            <span className="mx-2">
+                                Ver Abonos
+                            </span>
+                        </button>
+                    </div>
+                
+                    <div className="collapse card p-1 m-1" id={"collapseAbonos"+ props.item.Id}>
+                    
+                        <ul className="list-group list-group-flush">
+
+                            {props.item.Abonos.map((abono, index)=> {
+                                return (
+                                    <li className="list-group-item d-flex justify-content-between align-items-center py-0" key={index}>
+                                        <div className="p-0 m-0">
+                                            <p className="p-0 m-0">
+                                                {abono.Type}
+                                            </p>  
+                                            <small className="p-0 m-0 text-muted">
+                                                { Moment(abono.CreateAt).format('MMMM Do YYYY, h:mm:ss a') }
+                                            </small>
+                                        </div>
+                                        <span className="badge badge-primary badge-pill badge-light">
+                                            {parseFloat( abono.Amount.toString()).toFixed(2)}
+                                        </span>
+                                    </li>
+
+                                )
+                            })}
+
+                        </ul>
+                    </div>
+
+                    <ul className="list-group list-group-flush">
                       
                         <li className="list-group-item d-flex justify-content-between align-items-center">
-                            <span className="font-weight-bold">Total:</span>
-                            <span className="badge badge-primary badge-pill">{total}</span>
+                            <span className="font-weight-bold">Precio:</span>
+                            <span className="badge badge-warning ">{props.item.Price.toFixed(2)}</span>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between align-items-center">
+                            <span className="font-weight-bold">Total Abonos:</span>
+                            <span className="badge badge-info ">{total.toFixed(2)}</span>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between align-items-center">
+                            <span className="font-weight-bold">Pendiente:</span>
+                            <span className="badge badge-primary">{(props.item.Price - total).toFixed(2)}</span>
                         </li>
                     </ul>
 
